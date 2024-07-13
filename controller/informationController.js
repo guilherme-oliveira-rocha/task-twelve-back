@@ -21,7 +21,7 @@ module.exports.getNewEmailsReceived = (req, res) => {
   
   const imap = new Imap({
     user: 'guilherme.dev12@gmail.com',
-    password: `${PASSWORD_GMAIL}`,
+    password: PASSWORD_GMAIL,
     host: "imap.gmail.com",
     port: 993,
     tls: true,
