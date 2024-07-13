@@ -14,7 +14,7 @@ const router = Router();
 router.get("/get", getInformations);
 router.post("/search", searchInformations);
 router.post("/create", saveInformations);
-router.post("/", getNewEmailsReceived);
+router.post("/email", getNewEmailsReceived);
 router.put("/update/:id", updateInformations);
 router.delete("/delete/:id", deleteInformations);
 

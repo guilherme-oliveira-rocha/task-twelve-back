@@ -1,4 +1,5 @@
 const informationModel = require("../model/informationModel")
+const PASSWORD_GMAIL = process.env.PASSWORD_GMAIL
 
 module.exports.getInformations = async (req, res) => {
     const info = await informationModel.find()
@@ -20,7 +21,7 @@ module.exports.getNewEmailsReceived = (req, res) => {
   
   const imap = new Imap({
     user: 'guilherme.dev12@gmail.com',
-    password: 'ejuj hvbb ymlr cfor',
+    password: `${PASSWORD_GMAIL}`,
     host: "imap.gmail.com",
     port: 993,
     tls: true,
