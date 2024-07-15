@@ -77,28 +77,31 @@ module.exports.getNewEmailsReceived = () => {
             });
     
             msg.once('end', async function() {
+
               try {
                 if (buffer.length > 0) {
                   const parsed = (await simpleParser(buffer)).text;
     
                   const arrHtmlBodyEmail = parsed.split(/\n/);
-                  const arrEspecificMsg = [];
-    
-                  let comment = "";
-    
-                  arrHtmlBodyEmail.forEach((info, index) => {
-                    if (info.includes('sent')) {
-                      arrEspecificMsg.push(info);
-                      comment = arrHtmlBodyEmail[index + 1];
+
+                  const result = {
+                    name: '',
+                    amount: '',
+                    comment: ''
+                  };
+
+                  const regex = /^(.*?) sent you \$(\d+\.\d{2}) (.*?) View your balance/;
+
+                  arrHtmlBodyEmail.forEach((info) => {
+                    const match = info.match(regex);
+                    if (match) {
+                      result.name = match[1].trim();
+                      result.amount = match[2];
+                      result.comment = match[3].trim();
                     }
                   });
-    
-                  const getLastEspecificfMsg = arrEspecificMsg.at(-1);
-                  const arrGetLastEspecificMsg = getLastEspecificfMsg.split(/[\s$]+/);
-    
-                  const name = arrGetLastEspecificMsg[0] + " " + arrGetLastEspecificMsg[1];
-                  const amount = parseFloat(arrGetLastEspecificMsg.at(-1));
-                  email.body = { name: name, amount: amount, comment: comment };
+
+                  email.body = { name: result.name, amount: result.amount, comment: result.comment };
     
                   emailData.push(email);
                 } else {
