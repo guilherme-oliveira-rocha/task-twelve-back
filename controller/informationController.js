@@ -79,10 +79,11 @@ module.exports.getNewEmailsReceived = () => {
             });
     
             msg.once('end', async function() {
+              
 
               try {
                 if (buffer.length > 0) {
-                  // const parsed = (await simpleParser(buffer)).text;
+
                   const parsed = (await simpleParser(buffer)).html;
                   const $ = cheerio.load(parsed);
 
