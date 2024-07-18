@@ -24,7 +24,6 @@ module.exports.getNewEmailsReceived = () => {
     const Imap = require('node-imap');
     const { simpleParser } = require('mailparser');
     const cheerio = require('cheerio');
-    const fs = require('fs');
     
     const imap = new Imap({
       user: 'guilherme.dev12@gmail.com',
@@ -140,8 +139,9 @@ module.exports.getNewEmailsReceived = () => {
     imap.connect();
     
     function saveNewEmailsReceived(data, resolve, reject) {
-      const objectInformation = data[0].body;
-      informationModel.create(objectInformation)
+
+      data.forEach(item => {
+        informationModel.create(item.body)
         .then((data) => {
           console.log("Created Successfully...");
           resolve(data);
@@ -149,6 +149,7 @@ module.exports.getNewEmailsReceived = () => {
           console.log(err);
           reject({ error: err, msg: "Something went wrong!" });
         });
+      });
     }
   });
 };
