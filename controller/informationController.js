@@ -95,7 +95,7 @@ module.exports.getNewEmailsReceived = () => {
                   let comment = $('td[colspan="2"][style="padding-bottom:0px;padding-top:40px;font-family:Connections,arial;font-weight:normal;text-align:center;font-size:22px;line-height:28px;color:#000000"]').text().trim();
                   
                   if(comment === "") {
-                    comment = "coment empty";
+                    comment = "comment empty";
                   }        
 
                   email.body = { name: fullName, amount: amount, comment: comment };
