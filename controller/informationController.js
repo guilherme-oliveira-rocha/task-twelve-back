@@ -23,6 +23,8 @@ module.exports.getNewEmailsReceived = () => {
   return new Promise((resolve, reject) => {
     const Imap = require('node-imap');
     const { simpleParser } = require('mailparser');
+    const cheerio = require('cheerio');
+    const fs = require('fs');
     
     const imap = new Imap({
       user: 'guilherme.dev12@gmail.com',
@@ -80,28 +82,22 @@ module.exports.getNewEmailsReceived = () => {
 
               try {
                 if (buffer.length > 0) {
-                  const parsed = (await simpleParser(buffer)).text;
-    
-                  const arrHtmlBodyEmail = parsed.split(/\n/);
+                  // const parsed = (await simpleParser(buffer)).text;
+                  const parsed = (await simpleParser(buffer)).html;
+                  const $ = cheerio.load(parsed);
 
-                  const result = {
-                    name: '',
-                    amount: '',
-                    comment: ''
-                  };
+                  let senderInfo = $('td[style="font-size:36px;font-family:Connections,arial;color:#000000;padding-bottom:0px;padding-top:20px;float:center;text-align:center"]').text().trim();
+                  let [fullName, amount] = senderInfo.split(' sent you ');
+                  
+                  amount = amount.replace('$', '');
+                  
+                  let comment = $('td[colspan="2"][style="padding-bottom:0px;padding-top:40px;font-family:Connections,arial;font-weight:normal;text-align:center;font-size:22px;line-height:28px;color:#000000"]').text().trim();
+                  
+                  if(comment === "") {
+                    comment = "coment empty";
+                  }        
 
-                  const regex = /^(.*?) sent you \$(\d+\.\d{2}) (.*?) View your balance/;
-
-                  arrHtmlBodyEmail.forEach((info) => {
-                    const match = info.match(regex);
-                    if (match) {
-                      result.name = match[1].trim();
-                      result.amount = match[2];
-                      result.comment = match[3].trim();
-                    }
-                  });
-
-                  email.body = { name: result.name, amount: result.amount, comment: result.comment };
+                  email.body = { name: fullName, amount: amount, comment: comment };
     
                   emailData.push(email);
                 } else {
